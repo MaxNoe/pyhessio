@@ -28,16 +28,46 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
+#include <string.h>
+
 #include "fileopen.h"
 
 #define BSIZE 8192
 
+void syntax(void);
+
+void syntax()
+{
+   fprintf(stderr,"fcat: read and write (concatenate) files, using the fileopen() functionalities.\n"
+        "Syntax: fcat [ -o new-output-file | -a append-to-file ] [ input file(s) ... ]\n"
+        "By default reading from standard input and writing to standard input (like 'cat').\n");
+   exit(1);
+}
+
 int main (int argc, char **argv)
 {
-   FILE *f = NULL;
+   FILE *f = NULL, *output = stdout;
    int iarg;
    size_t n;
    char buffer[BSIZE];
+   
+   if ( argc > 1 && strcmp(argv[1],"--help") == 0 )
+      syntax();
+   
+   if ( argc > 2 && (strcmp(argv[1],"-o") == 0 || strcmp(argv[1],"-a") == 0) )
+   {
+      if ( strcmp(argv[1],"-o") == 0 )
+         output = fileopen(argv[2],"w");
+      else
+         output = fileopen(argv[2],"a");
+      argc -= 2;
+      argv += 2;
+      if ( output == NULL )
+      {
+         perror(argv[0]);
+         exit(1);
+      }
+   }
 
    for (iarg=1; iarg<argc; iarg++)
    {
@@ -50,15 +80,17 @@ int main (int argc, char **argv)
          exit(1);
       }
       while ( (n=fread(buffer,1,BSIZE,f)) == BSIZE )
-         fwrite(buffer,1,n,stdout);
+         fwrite(buffer,1,n,output);
       if ( n > 0 )
-         fwrite(buffer,1,n,stdout);
+         fwrite(buffer,1,n,output);
       if ( ferror(f) )
       {
          if ( errno != 0 )
             perror(argv[iarg]);
          fflush(0);
          fprintf(stderr,"(An error reading from the file)\n");
+         if ( output != stdout )
+            fileclose(output);
          exit(1);
       }
       if ( fileclose(f) != 0 )
@@ -67,9 +99,14 @@ int main (int argc, char **argv)
             perror(argv[iarg]);
          fflush(0);
          fprintf(stderr,"(An error closing the file)\n");
+         if ( output != stdout )
+            fileclose(output);
          exit(1);
       }
    }
+
+   if ( output != stdout )
+      fileclose(output);
 
    return 0;
 }

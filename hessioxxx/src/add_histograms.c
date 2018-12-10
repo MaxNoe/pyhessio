@@ -29,8 +29,8 @@ Syntax:  add_histograms [ -x id1,...] input_files ... -o output_file
  *  Only non-empty histograms are written to output.
  *
  *  @author Konrad Bernloehr
- *  @date    @verbatim CVS $Date: 2014/06/24 14:29:40 $ @endverbatim
- *  @version @verbatim CVS $Revision: 1.2 $ @endverbatim
+ *  @date    @verbatim CVS $Date: 2018/10/25 17:41:40 $ @endverbatim
+ *  @version @verbatim CVS $Revision: 1.3 $ @endverbatim
  */
 
 /** @defgroup add_histograms_c The add_histograms program */
@@ -63,6 +63,8 @@ int main (int argc, char **argv)
    int iarg;
    long *xcld_ids = NULL;
    int nxcld = 0;
+   
+   initpath(NULL);
 
    while ( argc >= 2 )
    {

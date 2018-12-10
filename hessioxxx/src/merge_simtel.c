@@ -68,8 +68,8 @@ Options:
 @endverbatim
  *
  *  @author  Konrad Bernloehr
- *  @date    @verbatim CVS $Date: 2016/05/03 14:00:08 $ @endverbatim
- *  @version @verbatim CVS $Revision: 1.10 $ @endverbatim
+ *  @date    @verbatim CVS $Date: 2017/05/16 12:31:52 $ @endverbatim
+ *  @version @verbatim CVS $Revision: 1.11 $ @endverbatim
  */
 
 /** @defgroup merge_simtel_c The merge_simtel program */
@@ -1643,9 +1643,9 @@ if ( ev_pe_sum > 0 && ev_pe_sum < item_header->ident )
       /* In-data trigger pattern block, or in extra file (auto-loaded or explicit) */
       case IO_TYPE_HESS_XTRGMASK: /* 2090 */
          if ( tms[ifile-1] == NULL )
-            tms[ifile-1] = calloc(1,sizeof(struct trgmask_set));
+            tms[ifile-1] = (struct trgmask_set *) calloc(1,sizeof(struct trgmask_set));
          if ( ths[ifile-1] == NULL )
-            ths[ifile-1] = calloc(1,sizeof(struct trgmask_hash_set));
+            ths[ifile-1] = (struct trgmask_hash_set *) calloc(1,sizeof(struct trgmask_hash_set));
          rc = read_trgmask(iobuf, tms[ifile-1]);
 	 if ( rc != 0 || verbose )
             printf("read_trgmask(), rc = %d\n",rc);
@@ -1731,9 +1731,9 @@ int check_autoload_trgmask(const char *input_fname, IO_BUFFER *iobuf, int ifile)
       if ( read_io_block(iobuf,&item_header) == 0 )
       {
          if ( tms[ifile-1] == NULL )
-            tms[ifile-1] = calloc(1,sizeof(struct trgmask_set));
+            tms[ifile-1] = (struct trgmask_set *) calloc(1,sizeof(struct trgmask_set));
          if ( ths[ifile-1] == NULL )
-            ths[ifile-1] = calloc(1,sizeof(struct trgmask_hash_set));
+            ths[ifile-1] = (struct trgmask_hash_set *) calloc(1,sizeof(struct trgmask_hash_set));
          rc = read_trgmask(iobuf, tms[ifile-1]);
 	 if ( rc != 0 )
             printf("read_trgmask(), rc = %d\n",rc);
@@ -1973,9 +1973,9 @@ int main (int argc, char **argv)
 
    push_command_history(argc, argv);
 
-   AllHessData *hsdata1 = calloc(1,sizeof(AllHessData)); /* First input */
-   AllHessData *hsdata2 = calloc(1,sizeof(AllHessData)); /* Second input */
-   AllHessData *hsdata3 = calloc(1,sizeof(AllHessData)); /* Merged, output */
+   AllHessData *hsdata1 = (AllHessData *) calloc(1,sizeof(AllHessData)); /* First input */
+   AllHessData *hsdata2 = (AllHessData *) calloc(1,sizeof(AllHessData)); /* Second input */
+   AllHessData *hsdata3 = (AllHessData *) calloc(1,sizeof(AllHessData)); /* Merged, output */
 
    if ( hsdata1 == NULL || hsdata2 == NULL || hsdata3 == NULL )
    {
